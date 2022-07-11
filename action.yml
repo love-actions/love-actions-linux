@@ -63,7 +63,7 @@ runs:
     - name: Assemble executable
       shell: bash
       run: |
-        cat ./squashfs-root/bin/love ./target.love > ./squashfs-root/bin/${{ inputs.executable-name }}
+        cat ./squashfs-root/bin/love ${{ inputs.love-package }} > ./squashfs-root/bin/${{ inputs.executable-name }}
         chmod +x ./squashfs-root/bin/${{ inputs.executable-name }}
     - name: Set icon
       if: "${{ inputs.icon-path != '' }}"
