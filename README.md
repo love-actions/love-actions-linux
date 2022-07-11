@@ -9,10 +9,15 @@ Github Action for building & deploying Linux `.AppImage` packages of a [LÖVE](h
 See related actions below:
 
 [Love actions bare package](https://github.com/marketplace/actions/love-actions-bare-package)
+
 [Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
+
 [Love actions for android](https://github.com/marketplace/actions/love-actions-for-android)
+
 [Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
+
 [Love actions for macOS](https://github.com/marketplace/actions/love-actions-for-macos)
+
 [Love actions for Windows](https://github.com/marketplace/actions/love-actions-for-windows)
 
 ## Quick example
