@@ -1,0 +1,89 @@
+name: Love actions for Linux
+description: Linux CI/CD for LÖVE based games
+branding:
+  icon: "heart"
+  color: "orange"
+inputs:
+  desktop-file-path:
+    description: |
+      Path to the desktop file
+      Would be used as appImage's info file
+    required: false
+  executable-name:
+    description: |
+      Executable name
+      Would be used as appImage's internal executable filename
+    required: false
+    default: "love"
+  icon-path:
+    description: |
+      Path to the icon
+      Would be used in building appImage
+    required: false
+  love-package:
+    description: |
+      Love package
+      Would be used to assemble the executable
+    required: false
+    default: "./game.love"
+  product-name:
+    description: |
+      Base name of the package
+      Would be used to rename products
+    required: false
+    default: "love_app"
+  output-folder:
+    description: |
+      Packages output folder
+      All packages would be placed here
+    required: false
+    default: "./build"
+outputs:
+  package-paths:
+    description: |
+      Paths to the built packages in a bash list
+      Would be paths relative to repository root, separated by spaces
+      Looks like: ./build/game.AppImage
+    value: ${{ steps.gather-packages.outputs.package-paths }}
+runs:
+  using: "composite"
+  steps:
+    - name: Download AppImageKit
+      shell: bash
+      run: |
+        curl -OL --retry 5 https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+        mv ./appimagetool-x86_64.AppImage ./appimagetool.AppImage
+        chmod a+x ./appimagetool.AppImage
+    - name: Download love
+      shell: bash
+      run: |
+        curl -OL --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-x86_64.AppImage
+        chmod +x ./love-11.4-x86_64.AppImage
+        ./love-11.4-x86_64.AppImage --appimage-extract
+    - name: Assemble executable
+      shell: bash
+      run: |
+        cat ./squashfs-root/bin/love ./target.love > ./squashfs-root/bin/${{ inputs.executable-name }}
+        chmod +x ./squashfs-root/bin/${{ inputs.executable-name }}
+    - name: Set icon
+      if: "${{ inputs.icon-path != '' }}"
+      shell: bash
+      run: |
+        rm -rf ./squashfs-root/love.svg ./squashfs-root/.DirIcon
+        cp ${{ inputs.icon-path }} ./squashfs-root/
+        mv ${{ inputs.icon-path }} ./squashfs-root/.DirIcon
+    - name: Set desktop file
+      if: "${{ inputs.desktop-file-path != '' }}"
+      shell: bash
+      run: |
+        rm -rf ./squashfs-root/love.desktop
+        mv ${{ inputs.desktop-file-path }} ./squashfs-root/${{ inputs.product-name }}.desktop
+    - name: Pack package
+      shell: bash
+      run: |
+        ./appimagetool.AppImage ./squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
+    - name: Gather packages in output folder
+      id: gather-packages
+      shell: bash
+      run: |
+        echo ::set-output name=package-paths::$(ls -d ${{ inputs.output-folder }}/*)
