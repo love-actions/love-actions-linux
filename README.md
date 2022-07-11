@@ -12,13 +12,15 @@ See related actions below:
 [Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
 [Love actions for android](https://github.com/marketplace/actions/love-actions-for-android)
 [Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
+[Love actions for macOS](https://github.com/marketplace/actions/love-actions-for-macos)
+[Love actions for Windows](https://github.com/marketplace/actions/love-actions-for-windows)
 
 ## Quick example
 
 ```yaml
 - name: Build Linux packages
   id: build-packages
-  uses: 26F-Studio/love-actions-linux@v0.0.1-alpha
+  uses: 26F-Studio/love-actions-linux@main
   with:
     desktop-file-path: ./.github/build/linux/dev/template.desktop
     executable-name: app
