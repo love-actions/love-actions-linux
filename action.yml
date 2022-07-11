@@ -78,6 +78,10 @@ runs:
       run: |
         rm -rf ./squashfs-root/love.desktop
         mv ${{ inputs.desktop-file-path }} ./squashfs-root/${{ inputs.product-name }}.desktop
+    - name: Ensure output folder
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.output-folder }}
     - name: Pack package
       shell: bash
       run: |
