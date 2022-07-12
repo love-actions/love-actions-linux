@@ -30,21 +30,21 @@ See related actions below:
     desktop-file-path: ./.github/build/linux/dev/template.desktop
     executable-name: app
     icon-path: ./.github/build/linux/dev/icon.png
-    love-package: ${{ env.CORE_LOVE_PACKAGE_PATH }}
-    product-name: ${{ steps.process-app-name.outputs.product-name }}
-    output-folder: ${{ env.OUTPUT_FOLDER }}
+    love-package: ./game.love
+    product-name: love_app
+    output-folder: "./dist"
 ```
 
 ## All inputs
 
-| Name                      | Required | Default                | Description                                                  |
-| :------------------------ | -------- | ---------------------- | ------------------------------------------------------------ |
-| `desktop-file-path`               | `false`  | `""` | Path to the `.desktop` file, see [Desktop integration](https://docs.appimage.org/reference/desktop-integration.html). Use LÖVE default if not specified |
-| `executable-name`          | `false`  | `"love"` | Executable name. Used as appImage's internal executable filename |
-| `icon-path`          | `false`  | `""`                   | Path to the appImage's icon. Use LÖVE default if not specified |
-| `love-package`         | `false`  | `"./game.love"`        | Love package. Used to assemble the executable |
-| `product-name`   | `false`  | `"love_app"`           | Base name of the package. Used to rename products |
-| `output-folder` | `false`  | `"./build"`            | Packages output folder. All packages would be placed here |
+| Name                | Required | Default         | Description                                                  |
+| :------------------ | -------- | --------------- | ------------------------------------------------------------ |
+| `desktop-file-path` | `false`  | `""`            | Path to the `.desktop` file, see [Desktop integration](https://docs.appimage.org/reference/desktop-integration.html). Use LÖVE default if not specified |
+| `executable-name`   | `false`  | `"love"`        | Executable name. Used as appImage's internal executable filename |
+| `icon-path`         | `false`  | `""`            | Path to the appImage's icon. Use LÖVE default if not specified |
+| `love-package`      | `false`  | `"./game.love"` | Love package. Used to assemble the executable                |
+| `product-name`      | `false`  | `"love_app"`    | Base name of the package. Used to rename products            |
+| `output-folder`     | `false`  | `"./build"`     | Packages output folder. All packages would be placed here    |
 
 ## All outputs
 
