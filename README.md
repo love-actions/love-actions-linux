@@ -16,7 +16,9 @@ See related actions below:
 
 [Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
 
-[Love actions for macOS](https://github.com/marketplace/actions/love-actions-for-macos)
+[Love actions for macOS portable](https://github.com/marketplace/actions/love-actions-for-macos-portable)
+
+[Love actions for macOS AppStore](https://github.com/marketplace/actions/love-actions-for-macos-appstore)
 
 [Love actions for Windows](https://github.com/marketplace/actions/love-actions-for-windows)
 
