@@ -48,46 +48,51 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Download AppImageKit
+    - name: Create directories
       shell: bash
       run: |
+        mkdir -p $RUNNER_TEMP/Linux/
+        mkdir -p ${{ inputs.output-folder }}
+    - name: Download AppImageKit and love appImage
+      shell: bash
+      run: |
+        cd $RUNNER_TEMP/Linux/
+
         curl -OL --retry 5 https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
         mv ./appimagetool-x86_64.AppImage ./appimagetool.AppImage
         chmod a+x ./appimagetool.AppImage
-    - name: Download love
-      shell: bash
-      run: |
+
         curl -OL --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-x86_64.AppImage
         chmod +x ./love-11.4-x86_64.AppImage
         ./love-11.4-x86_64.AppImage --appimage-extract
     - name: Assemble executable
       shell: bash
       run: |
-        cat ./squashfs-root/bin/love ${{ inputs.love-package }} > ./squashfs-root/bin/${{ inputs.executable-name }}
-        chmod +x ./squashfs-root/bin/${{ inputs.executable-name }}
+        cat $RUNNER_TEMP/Linux/squashfs-root/bin/love ${{ inputs.love-package }} > $RUNNER_TEMP/Linux/squashfs-root/bin/${{ inputs.executable-name }}
+        chmod +x $RUNNER_TEMP/Linux/squashfs-root/bin/${{ inputs.executable-name }}
     - name: Set icon
       if: "${{ inputs.icon-path != '' }}"
       shell: bash
       run: |
-        rm -rf ./squashfs-root/love.svg ./squashfs-root/.DirIcon
-        cp ${{ inputs.icon-path }} ./squashfs-root/
-        mv ${{ inputs.icon-path }} ./squashfs-root/.DirIcon
+        rm -rf $RUNNER_TEMP/Linux/squashfs-root/love.svg $RUNNER_TEMP/Linux/squashfs-root/.DirIcon
+        cp ${{ inputs.icon-path }} $RUNNER_TEMP/Linux/squashfs-root/
+        mv ${{ inputs.icon-path }} $RUNNER_TEMP/Linux/squashfs-root/.DirIcon
     - name: Set desktop file
       if: "${{ inputs.desktop-file-path != '' }}"
       shell: bash
       run: |
-        rm -rf ./squashfs-root/love.desktop
-        mv ${{ inputs.desktop-file-path }} ./squashfs-root/${{ inputs.product-name }}.desktop
-    - name: Ensure output folder
-      shell: bash
-      run: |
-        mkdir -p ${{ inputs.output-folder }}
+        rm -rf $RUNNER_TEMP/Linux/squashfs-root/love.desktop
+        mv ${{ inputs.desktop-file-path }} $RUNNER_TEMP/Linux/squashfs-root/${{ inputs.product-name }}.desktop
     - name: Pack package
       shell: bash
       run: |
-        ./appimagetool.AppImage ./squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
+        $RUNNER_TEMP/Linux/appimagetool.AppImage $RUNNER_TEMP/Linux/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
       run: |
         echo ::set-output name=package-paths::$(ls -d ${{ inputs.output-folder }}/*)
+    - name: Cleanup
+      shell: bash
+      run: |
+        rm -rf $RUNNER_TEMP/Linux/
