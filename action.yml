@@ -99,11 +99,13 @@ runs:
       if: "${{ inputs.libs-path != '' }}"
       shell: bash
       run: |
+        mkdir -p ./love-actions-linux/squashfs-root/usr/lib
         cp -r -f ${{ inputs.libs-path }} ./love-actions-linux/squashfs-root/usr/lib
     - name: Copy shared
       if: "${{ inputs.shared-path != '' }}"
       shell: bash
       run: |
+        mkdir -p ./love-actions-linux/squashfs-root/usr/share/${{ inputs.product-name }}
         cp -r -f ${{ inputs.shared-path }} ./love-actions-linux/squashfs-root/usr/share/${{ inputs.product-name }}
     - name: Pack package
       shell: bash
