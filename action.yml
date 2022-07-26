@@ -26,6 +26,18 @@ inputs:
       Would be used to assemble the executable
     required: false
     default: "./game.love"
+  libs-path:
+    description: |
+      Path to the libs folder
+      Would copy all contents to squashfs-root/usr/lib
+      Top folder not included
+    required: false
+  shared-path:
+    description: |
+      Path to the shared folder
+      Would copy all contents to squashfs-root/usr/share/{product-name}
+      Top folder not included
+    required: false
   product-name:
     description: |
       Base name of the package
@@ -83,6 +95,16 @@ runs:
       run: |
         rm -rf ./love-actions-linux/squashfs-root/love.desktop
         mv ${{ inputs.desktop-file-path }} ./love-actions-linux/squashfs-root/${{ inputs.product-name }}.desktop
+    - name: Copy libs
+      if: "${{ inputs.libs-path != '' }}"
+      shell: bash
+      run: |
+        cp -r -f ${{ inputs.libs-path }} ./love-actions-linux/squashfs-root/usr/lib
+    - name: Copy shared
+      if: "${{ inputs.shared-path != '' }}"
+      shell: bash
+      run: |
+        cp -r -f ${{ inputs.shared-path }} ./love-actions-linux/squashfs-root/usr/share/${{ inputs.product-name }}
     - name: Pack package
       shell: bash
       run: |

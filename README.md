@@ -33,23 +33,27 @@ See related actions below:
     executable-name: app
     icon-path: ./.github/build/linux/dev/icon.png
     love-package: ./game.love
+    libs-path: ./libs
+    shared-path: ./shared
     product-name: love_app
-    output-folder: "./dist"
+    output-folder: ./dist
 ```
 
 ## All inputs
 
-| Name                | Required | Default         | Description                                                  |
-| :------------------ | -------- | --------------- | ------------------------------------------------------------ |
+| Name                | Required | Default         | Description                                                                                                         |
+| :------------------ | -------- | --------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `desktop-file-path` | `false`  | `""`            | Path to the `.desktop` file, see [Desktop integration](https://docs.appimage.org/reference/desktop-integration.html). Use LÖVE default if not specified |
-| `executable-name`   | `false`  | `"love"`        | Executable name. Used as appImage's internal executable filename |
-| `icon-path`         | `false`  | `""`            | Path to the appImage's icon. Use LÖVE default if not specified |
-| `love-package`      | `false`  | `"./game.love"` | Love package. Used to assemble the executable                |
-| `product-name`      | `false`  | `"love_app"`    | Base name of the package. Used to rename products            |
-| `output-folder`     | `false`  | `"./build"`     | Packages output folder. All packages would be placed here    |
+| `executable-name`   | `false`  | `"love"`        | Executable name. Used as appImage's internal executable filename                                                    |
+| `icon-path`         | `false`  | `""`            | Path to the appImage's icon. Use LÖVE default if not specified                                                      |
+| `love-package`      | `false`  | `"./game.love"` | Love package. Used to assemble the executable                                                                       |
+| `libs-path`         | `false`  | `""`            | Path to the libraries folder. Would copy all contents to `squashfs-root/usr/lib` excluding top folder               |
+| `shared-path`       | `false`  | `""`            | Path to the shared folder. Would copy all contents to `squashfs-root/usr/share/{product-name}` excluding top folder |
+| `product-name`      | `false`  | `"love_app"`    | Base name of the package. Used to rename products                                                                   |
+| `output-folder`     | `false`  | `"./build"`     | Packages output folder. All packages would be placed here                                                           |
 
 ## All outputs
 
-| Name            | Example                     | Description                                                  |
-| :-------------- | --------------------------- | ------------------------------------------------------------ |
+| Name            | Example                     | Description                                                                                     |
+| :-------------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | `package-paths` | `./build/love_app.AppImage` | built packages' paths in a bash-style list relative to the repository root, separated by spaces |
