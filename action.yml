@@ -65,6 +65,11 @@ runs:
       run: |
         mkdir -p ./love-actions-linux/
         mkdir -p ${{ inputs.output-folder }}
+    - name: Install libfuse2
+      shell: bash
+      run: |
+        sudo add-apt-repository universe
+        sudo apt install libfuse2
     - name: Download AppImageKit and love appImage
       shell: bash
       run: |
