@@ -105,13 +105,13 @@ runs:
       shell: bash
       run: |
         mkdir -p ./love-actions-linux/squashfs-root/lib/lua/5.1
-        cp -r -f ${{ inputs.lib-path }} ./love-actions-linux/squashfs-root/lib/lua/5.1
+        cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/squashfs-root/lib/lua/5.1
     - name: Copy share
       if: "${{ inputs.share-path != '' }}"
       shell: bash
       run: |
         mkdir -p ./love-actions-linux/squashfs-root/usr/share/lua/5.1
-        cp -r -f ${{ inputs.share-path }} ./love-actions-linux/squashfs-root/share/lua/5.1
+        cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share/lua/5.1
     - name: Pack package
       shell: bash
       run: |
