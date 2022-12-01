@@ -29,13 +29,13 @@ inputs:
   lib-path:
     description: |
       Path to the lib folder
-      Would copy all contents to squashfs-root/lib/lua/5.1
+      Would copy all contents to squashfs-root/lib
       Top folder not included
     required: false
   share-path:
     description: |
       Path to the share folder
-      Would copy all contents to squashfs-root/share/lua/5.1
+      Would copy all contents to squashfs-root/share
       Top folder not included
     required: false
   product-name:
@@ -104,14 +104,14 @@ runs:
       if: "${{ inputs.lib-path != '' }}"
       shell: bash
       run: |
-        mkdir -p ./love-actions-linux/squashfs-root/lib/lua/5.1
-        cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/squashfs-root/lib/lua/5.1
+        mkdir -p ./love-actions-linux/squashfs-root/lib
+        cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/squashfs-root/lib
     - name: Copy share
       if: "${{ inputs.share-path != '' }}"
       shell: bash
       run: |
-        mkdir -p ./love-actions-linux/squashfs-root/usr/share/lua/5.1
-        cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share/lua/5.1
+        mkdir -p ./love-actions-linux/squashfs-root/share
+        cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share
     - name: Pack package
       shell: bash
       run: |

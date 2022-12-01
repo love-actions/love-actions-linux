@@ -39,6 +39,21 @@ See related actions below:
     output-folder: ./dist
 ```
 
+### Notice
+
+If you want to load dynamic libraries in love runtime, you should place them in the `{lib-path}/lua/5.1/` dir.
+
+Your library folder should look like this:
+
+```
+ - lib
+    |- a.so
+    |- b.so
+    |- lua
+        |-5.1
+           |- load_in_lua.so
+```
+
 ## All inputs
 
 | Name                  | Required  | Default           | Description                                                                                                                                             |
@@ -47,8 +62,8 @@ See related actions below:
 | `executable-name`   | `false` | `"love"`        | Executable name. Used as appImage's internal executable filename                                                                                        |
 | `icon-path`         | `false` | `""`            | Path to the appImage's icon. Use LÖVE default if not specified                                                                                         |
 | `love-package`      | `false` | `"./game.love"` | Love package. Used to assemble the executable                                                                                                           |
-| `lib-path`          | `false` | `""`            | Path to the library folder. Would copy all contents to `squashfs-root/lib/lua/5.1` excluding top folder                                                 |
-| `share-path`        | `false` | `""`            | Path to the share folder. Would copy all contents to `squashfs-root/share/lua/5.1` excluding top folder                                   |
+| `lib-path`          | `false` | `""`            | Path to the library folder. Would copy all contents to `squashfs-root/lib` excluding top folder                                                      |
+| `share-path`        | `false` | `""`            | Path to the share folder. Would copy all contents to `squashfs-root/share` excluding top folder                                                       |
 | `product-name`      | `false` | `"love_app"`    | Base name of the package. Used to rename products                                                                                                       |
 | `output-folder`     | `false` | `"./build"`     | Packages output folder. All packages would be placed here                                                                                               |
 
