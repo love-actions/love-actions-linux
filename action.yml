@@ -26,16 +26,16 @@ inputs:
       Would be used to assemble the executable
     required: false
     default: "./game.love"
-  libs-path:
+  lib-path:
     description: |
-      Path to the libs folder
-      Would copy all contents to squashfs-root/usr/lib
+      Path to the lib folder
+      Would copy all contents to squashfs-root/lib/lua/5.1
       Top folder not included
     required: false
-  shared-path:
+  share-path:
     description: |
-      Path to the shared folder
-      Would copy all contents to squashfs-root/usr/share/{product-name}
+      Path to the share folder
+      Would copy all contents to squashfs-root/share/lua/5.1
       Top folder not included
     required: false
   product-name:
@@ -100,18 +100,18 @@ runs:
       run: |
         rm -rf ./love-actions-linux/squashfs-root/love.desktop
         mv ${{ inputs.desktop-file-path }} ./love-actions-linux/squashfs-root/${{ inputs.product-name }}.desktop
-    - name: Copy libs
-      if: "${{ inputs.libs-path != '' }}"
+    - name: Copy lib
+      if: "${{ inputs.lib-path != '' }}"
       shell: bash
       run: |
-        mkdir -p ./love-actions-linux/squashfs-root/usr/lib
-        cp -r -f ${{ inputs.libs-path }} ./love-actions-linux/squashfs-root/usr/lib
-    - name: Copy shared
-      if: "${{ inputs.shared-path != '' }}"
+        mkdir -p ./love-actions-linux/squashfs-root/lib/lua/5.1
+        cp -r -f ${{ inputs.lib-path }} ./love-actions-linux/squashfs-root/lib/lua/5.1
+    - name: Copy share
+      if: "${{ inputs.share-path != '' }}"
       shell: bash
       run: |
-        mkdir -p ./love-actions-linux/squashfs-root/usr/share/${{ inputs.product-name }}
-        cp -r -f ${{ inputs.shared-path }} ./love-actions-linux/squashfs-root/usr/share/${{ inputs.product-name }}
+        mkdir -p ./love-actions-linux/squashfs-root/usr/share/lua/5.1
+        cp -r -f ${{ inputs.share-path }} ./love-actions-linux/squashfs-root/share/lua/5.1
     - name: Pack package
       shell: bash
       run: |

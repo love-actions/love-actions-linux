@@ -33,8 +33,8 @@ See related actions below:
     executable-name: app
     icon-path: ./.github/build/linux/dev/icon.png
     love-package: ./game.love
-    libs-path: ./libs
-    shared-path: ./shared
+    lib-path: ./lib
+    share-path: ./share
     product-name: love_app
     output-folder: ./dist
 ```
@@ -47,8 +47,8 @@ See related actions below:
 | `executable-name`   | `false` | `"love"`        | Executable name. Used as appImage's internal executable filename                                                                                        |
 | `icon-path`         | `false` | `""`            | Path to the appImage's icon. Use LÖVE default if not specified                                                                                         |
 | `love-package`      | `false` | `"./game.love"` | Love package. Used to assemble the executable                                                                                                           |
-| `libs-path`         | `false` | `""`            | Path to the libraries folder. Would copy all contents to `squashfs-root/usr/lib` excluding top folder                                                 |
-| `shared-path`       | `false` | `""`            | Path to the shared folder. Would copy all contents to `squashfs-root/usr/share/{product-name}` excluding top folder                                   |
+| `lib-path`          | `false` | `""`            | Path to the library folder. Would copy all contents to `squashfs-root/lib/lua/5.1` excluding top folder                                                 |
+| `share-path`        | `false` | `""`            | Path to the share folder. Would copy all contents to `squashfs-root/share/lua/5.1` excluding top folder                                   |
 | `product-name`      | `false` | `"love_app"`    | Base name of the package. Used to rename products                                                                                                       |
 | `output-folder`     | `false` | `"./build"`     | Packages output folder. All packages would be placed here                                                                                               |
 
