@@ -4,17 +4,25 @@ branding:
   icon: "heart"
   color: "orange"
 inputs:
-  desktop-file-path:
+  app-name:
     description: |
-      Path to the desktop file
-      Would be used as appImage's info file
-    required: false
-  executable-name:
-    description: |
-      Executable name
-      Would be used as appImage's internal executable filename
+      App display name
+      Would be used in desktop file
     required: false
     default: "love"
+  description:
+    description: |
+      App description
+      Would be used in control file and desktop file
+    required: false
+    default: "love game"
+  version-string:
+    description: |
+      App version string
+      Use 3 numbers seperated by dots
+      Looks like 3.2.1
+    required: false
+    default: "11.4"
   icon-path:
     description: |
       Path to the icon
@@ -29,15 +37,25 @@ inputs:
   lib-path:
     description: |
       Path to the lib folder
-      Would copy all contents to squashfs-root/lib
+      Would copy all contents
       Top folder not included
     required: false
   share-path:
     description: |
       Path to the share folder
-      Would copy all contents to squashfs-root/share
+      Would copy all contents
       Top folder not included
     required: false
+  build-appimage:
+    description: |
+      Switch to control build appImage or not
+    required: false
+    default: "true"
+  build-deb:
+    description: |
+      Switch to control build deb package or not
+    required: false
+    default: "true"
   product-name:
     description: |
       Base name of the package
@@ -65,57 +83,124 @@ runs:
       run: |
         mkdir -p ./love-actions-linux/
         mkdir -p ${{ inputs.output-folder }}
-    - name: Install libfuse2
+    - name: Create appImage package
+      if: ${{ inputs.build-appimage == 'true' }}
       shell: bash
       run: |
-        sudo add-apt-repository universe
-        sudo apt install libfuse2
-    - name: Download AppImageKit and love appImage
-      shell: bash
-      run: |
-        cd ./love-actions-linux/
+        # Install dependencies
+        sudo add-apt-repository universe && sudo apt install libfuse2
 
+        # Download appImageKit and love base package
+        cd ./love-actions-linux/
         curl -OL --retry 5 https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+        curl -OL --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-x86_64.AppImage
         mv ./appimagetool-x86_64.AppImage ./appimagetool.AppImage
         chmod a+x ./appimagetool.AppImage
-
-        curl -OL --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-x86_64.AppImage
-        chmod +x ./love-11.4-x86_64.AppImage
+        chmod a+x ./love-11.4-x86_64.AppImage
         ./love-11.4-x86_64.AppImage --appimage-extract
-    - name: Assemble executable
-      shell: bash
-      run: |
-        cat ./love-actions-linux/squashfs-root/bin/love ${{ inputs.love-package }} > ./love-actions-linux/squashfs-root/bin/${{ inputs.executable-name }}
-        chmod +x ./love-actions-linux/squashfs-root/bin/${{ inputs.executable-name }}
-    - name: Set icon
-      if: "${{ inputs.icon-path != '' }}"
-      shell: bash
-      run: |
-        rm -rf ./love-actions-linux/squashfs-root/love.svg ./love-actions-linux/squashfs-root/.DirIcon
-        cp ${{ inputs.icon-path }} ./love-actions-linux/squashfs-root/
-        mv ${{ inputs.icon-path }} ./love-actions-linux/squashfs-root/.DirIcon
-    - name: Set desktop file
-      if: "${{ inputs.desktop-file-path != '' }}"
-      shell: bash
-      run: |
+        cd ..
+
+        # Create desktop file
         rm -rf ./love-actions-linux/squashfs-root/love.desktop
-        mv ${{ inputs.desktop-file-path }} ./love-actions-linux/squashfs-root/${{ inputs.product-name }}.desktop
-    - name: Copy lib
-      if: "${{ inputs.lib-path != '' }}"
-      shell: bash
-      run: |
-        mkdir -p ./love-actions-linux/squashfs-root/lib
-        cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/squashfs-root/lib
-    - name: Copy share
-      if: "${{ inputs.share-path != '' }}"
-      shell: bash
-      run: |
-        mkdir -p ./love-actions-linux/squashfs-root/share
-        cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share
-    - name: Pack package
-      shell: bash
-      run: |
+        cat > ./love-actions-linux/squashfs-root/${{ inputs.product-name }}.desktop << EOF
+        [Desktop Entry]
+        Name=${{ inputs.app-name }}
+        Comment=${{ inputs.description }}
+        Version=${{ inputs.version-string }}
+        Type=Application
+        Keywords=love;game;
+        MimeType=application/x-love-game;
+        Categories=Game;
+        Exec=${{ inputs.product-name }} %f
+        Icon=${{ inputs.product-name }}
+        Terminal=false
+        NoDisplay=false
+        EOF
+
+        # Assemble executable
+        cat ./love-actions-linux/squashfs-root/bin/love ${{ inputs.love-package }} > ./love-actions-linux/squashfs-root/bin/${{ inputs.product-name }}
+        chmod +x ./love-actions-linux/squashfs-root/bin/${{ inputs.product-name }}
+
+        # Copy icon
+        if [ -d "${{ inputs.icon-path }}" ]; then
+          rm -rf ./love-actions-linux/squashfs-root/love.svg ./love-actions-linux/squashfs-root/.DirIcon
+          cp ${{ inputs.icon-path }} ./love-actions-linux/squashfs-root/
+          cp ${{ inputs.icon-path }} ./love-actions-linux/squashfs-root/.DirIcon
+        fi
+
+        # Copy lib
+        if [ -d "${{ inputs.lib-path }}" ]; then
+          mkdir -p ./love-actions-linux/squashfs-root/lib
+          cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/squashfs-root/lib
+        fi
+
+        # Copy share
+        if [ -d "${{ inputs.share-path }}" ]; then
+          mkdir -p ./love-actions-linux/squashfs-root/share
+          cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share
+        fi
+
+        # Build appImage package
         ./love-actions-linux/appimagetool.AppImage ./love-actions-linux/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
+    - name: Create deb package
+      if: ${{ inputs.build-deb == 'true' }}
+      shell: bash
+      run: |
+        # Create control file
+        mkdir -p ./love-actions-linux/${{ inputs.product-name }}/DEBIAN
+        cat > ./love-actions-linux/${{ inputs.product-name }}/DEBIAN/control << EOF
+        Package: ${{ inputs.product-name }}
+        Version: ${{ inputs.version-string }}
+        Depends:
+         love (>= 11.4),
+        Section: games
+        Priority: optional
+        Architecture: amd64
+        Maintainer: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        Description: ${{ inputs.description }}
+        EOF
+
+        # Create desktop file
+        mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications
+        cat > ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications/${{ inputs.app-name }}.desktop << EOF
+        [Desktop Entry]
+        Name=${{ inputs.app-name }}
+        Comment=${{ inputs.description }}
+        Version=${{ inputs.version-string }}
+        Type=Application
+        Keywords=love;game;
+        MimeType=application/x-love-game;
+        Categories=Game;
+        Exec=love /usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.love
+        Icon=${{ inputs.product-name }}
+        Terminal=false
+        NoDisplay=false
+        EOF
+
+        # Copy love package
+        mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/${{ inputs.product-name }}
+        cp ${{ inputs.love-package }} ./love-actions-linux/${{ inputs.product-name }}/usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.love
+
+        # Copy icon
+        if [ -d "${{ inputs.icon-path }}" ]; then
+          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps
+          cp ${{ inputs.icon-path }} ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.png
+        fi
+
+        # Copy lib
+        if [ -d "${{ inputs.lib-path }}" ]; then
+          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/lib
+          cp -r ${{ inputs.lib-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/lib/x86_64-linux-gnu/
+        fi
+
+        # Copy share
+        if [ -d "${{ inputs.share-path }}" ]; then
+          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share
+          cp -r ${{ inputs.share-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/share/
+        fi
+
+        # Build deb package
+        dpkg-deb --build ./love-actions-linux/${{ inputs.product-name }} ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
