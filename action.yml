@@ -191,7 +191,7 @@ runs:
           echo "Copying icon..."
           mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps
           ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
-          cp ${{ inputs.icon-path }} "./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.${ICON_PATH##*.}"
+          cp ${{ inputs.icon-path }} "./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/scalable/apps/${{ inputs.product-name }}.${ICON_PATH##*.}"
         fi
 
         # Copy lib
@@ -207,9 +207,6 @@ runs:
           mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share
           cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/share/
         fi
-
-        # List files
-        ls -R ./love-actions-linux/${{ inputs.product-name }}
 
         # Build deb package
         echo "Building deb package..."
