@@ -10,6 +10,12 @@ inputs:
       Would be used in desktop file
     required: false
     default: "love"
+  bundle-id: 
+    description: |
+      App bundle ID
+      Would be used to rename debian package's desktop file
+    required: false
+    default: "org.loveactions.love"
   description:
     description: |
       App description
@@ -165,16 +171,16 @@ runs:
         Description: ${{ inputs.description }}
         EOF
 
-        # Create desktop file
+        # Get icon extension
         ICON_EXETENSION="png"
         if [ -f "${{ inputs.icon-path }}" ]; then
           ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
           ICON_EXETENSION=${ICON_PATH##*.}
         fi
-        echo $ICON_EXETENSION
 
+        # Create desktop file
         mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications
-        cat > ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications/${{ inputs.app-name }}.desktop << EOF
+        cat > ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications/${{ inputs.bundle-id }}.desktop << EOF
         [Desktop Entry]
         Name=${{ inputs.app-name }}
         Comment=${{ inputs.description }}
