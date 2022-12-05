@@ -166,6 +166,13 @@ runs:
         EOF
 
         # Create desktop file
+        ICON_EXETENSION="png"
+        if [ -f "${{ inputs.icon-path }}" ]; then
+          ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
+          ICON_EXETENSION=${ICON_PATH##*.}
+        fi
+        echo $ICON_EXETENSION
+
         mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications
         cat > ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications/${{ inputs.app-name }}.desktop << EOF
         [Desktop Entry]
@@ -176,7 +183,7 @@ runs:
         MimeType=application/x-love-game;
         Categories=Game;
         Exec=love /usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.love
-        Icon=${{ inputs.product-name }}
+        Icon=/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.$ICON_EXETENSION
         Terminal=false
         NoDisplay=false
         EOF
@@ -190,8 +197,7 @@ runs:
         if [ -f "${{ inputs.icon-path }}" ]; then
           echo "Copying icon..."
           mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps
-          ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
-          cp ${{ inputs.icon-path }} "./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/scalable/apps/${{ inputs.product-name }}.${ICON_PATH##*.}"
+          cp ${{ inputs.icon-path }} "./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.$ICON_EXETENSION"
         fi
 
         # Copy lib
