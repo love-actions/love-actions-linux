@@ -122,7 +122,7 @@ runs:
         chmod +x ./love-actions-linux/squashfs-root/bin/${{ inputs.product-name }}
 
         # Copy icon
-        if [ -d "${{ inputs.icon-path }}" ]; then
+        if [ -f "${{ inputs.icon-path }}" ]; then
           echo "Copying icon..."
           rm -rf ./love-actions-linux/squashfs-root/love.svg ./love-actions-linux/squashfs-root/.DirIcon
           ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
@@ -190,7 +190,7 @@ runs:
         cp ${{ inputs.love-package }} ./love-actions-linux/${{ inputs.product-name }}/usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.love
 
         # Copy icon
-        if [ -d "${{ inputs.icon-path }}" ]; then
+        if [ -f "${{ inputs.icon-path }}" ]; then
           echo "Copying icon..."
           mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps
           ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
