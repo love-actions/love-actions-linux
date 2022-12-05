@@ -144,9 +144,6 @@ runs:
           cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share
         fi
 
-        # List files
-        ls -R ./love-actions-linux/squashfs-root
-
         # Build appImage package
         echo "Building appImage package..."
         ./love-actions-linux/appimagetool.AppImage ./love-actions-linux/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
@@ -159,8 +156,7 @@ runs:
         cat > ./love-actions-linux/${{ inputs.product-name }}/DEBIAN/control << EOF
         Package: ${{ inputs.product-name }}
         Version: ${{ inputs.version-string }}
-        Depends:
-         love (>= 11.4),
+        Depends: love (>= 11.4)
         Section: games
         Priority: optional
         Architecture: amd64
