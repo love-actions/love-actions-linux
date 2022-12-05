@@ -196,16 +196,19 @@ runs:
         # Copy lib
         if [ -d "${{ inputs.lib-path }}" ]; then
           echo "Copying lib..."
-          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/lib
-          cp -r ${{ inputs.lib-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/lib/x86_64-linux-gnu/
+          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/lib/x86_64-linux-gnu/
+          cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/lib/x86_64-linux-gnu/
         fi
 
         # Copy share
         if [ -d "${{ inputs.share-path }}" ]; then
           echo "Copying share..."
           mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share
-          cp -r ${{ inputs.share-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/share/
+          cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/share/
         fi
+
+        # List files
+        ls -R ./love-actions-linux/${{ inputs.product-name }}
 
         # Build deb package
         echo "Building deb package..."
