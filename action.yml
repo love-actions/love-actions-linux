@@ -147,6 +147,7 @@ runs:
         # Build appImage package
         echo "Building appImage package..."
         ./love-actions-linux/appimagetool.AppImage ./love-actions-linux/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
+        chmod a+x ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
     - name: Create deb package
       if: ${{ inputs.build-deb == 'true' }}
       shell: bash
@@ -213,6 +214,7 @@ runs:
         # Build deb package
         echo "Building deb package..."
         dpkg-deb --build ./love-actions-linux/${{ inputs.product-name }} ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
+        chmod a+x ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
