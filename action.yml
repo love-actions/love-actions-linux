@@ -106,7 +106,6 @@ runs:
         [Desktop Entry]
         Name=${{ inputs.app-name }}
         Comment=${{ inputs.description }}
-        Version=${{ inputs.version-string }}
         Type=Application
         Keywords=love;game;
         MimeType=application/x-love-game;
@@ -166,7 +165,6 @@ runs:
         [Desktop Entry]
         Name=${{ inputs.app-name }}
         Comment=${{ inputs.description }}
-        Version=${{ inputs.version-string }}
         Type=Application
         Keywords=love;game;
         MimeType=application/x-love-game;
