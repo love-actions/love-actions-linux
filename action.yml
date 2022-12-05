@@ -123,7 +123,8 @@ runs:
         # Copy icon
         if [ -d "${{ inputs.icon-path }}" ]; then
           rm -rf ./love-actions-linux/squashfs-root/love.svg ./love-actions-linux/squashfs-root/.DirIcon
-          cp ${{ inputs.icon-path }} ./love-actions-linux/squashfs-root/
+          ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
+          cp ${{ inputs.icon-path }} "./love-actions-linux/squashfs-root/${{ inputs.product-name }}.${ICON_PATH##*.}"
           cp ${{ inputs.icon-path }} ./love-actions-linux/squashfs-root/.DirIcon
         fi
 
@@ -182,7 +183,8 @@ runs:
         # Copy icon
         if [ -d "${{ inputs.icon-path }}" ]; then
           mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps
-          cp ${{ inputs.icon-path }} ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.png
+          ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
+          cp ${{ inputs.icon-path }} "./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.${ICON_PATH##*.}"
         fi
 
         # Copy lib
