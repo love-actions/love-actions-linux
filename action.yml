@@ -140,6 +140,9 @@ runs:
           cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share
         fi
 
+        # List files
+        ls -R ./love-actions-linux/squashfs-root
+
         # Build appImage package
         ./love-actions-linux/appimagetool.AppImage ./love-actions-linux/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
     - name: Create deb package
@@ -198,6 +201,9 @@ runs:
           mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share
           cp -r ${{ inputs.share-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/share/
         fi
+
+        # List files
+        ls -R ./love-actions-linux/${{ inputs.product-name }}
 
         # Build deb package
         dpkg-deb --build ./love-actions-linux/${{ inputs.product-name }} ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
