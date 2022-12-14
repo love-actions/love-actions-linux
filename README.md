@@ -148,23 +148,23 @@ jobs:
 
 ## All inputs
 
-| Name             | Required | Default                  | Description                                                              |
-| :--------------- | -------- | ------------------------ | ------------------------------------------------------------------------ |
-| `app-name`       | `false`  | `"Love App"`             | App display name. Would be used in desktop file                          |
-| `bundle-id`      | `false`  | `"org.loveactions.love"` | App bundle ID. Would be used to rename debian package's desktop file     |
-| `description`    | `false`  | `"love"`                 | App description. Would be used in control file and desktop file          |
-| `version-string` | `false`  | `"love"`                 | App version string. Use 3 numbers seperated by dots                      |
-| `icon-path`      | `false`  | `""`                     | Path to the appImage's icon. Use LÖVE default if not specified           |
-| `love-package`   | `false`  | `"./game.love"`          | Love package. Used to assemble the executable                            |
-| `lib-path`       | `false`  | `""`                     | Path to the library folder. Would copy all contents excluding top folder |
-| `share-path`     | `false`  | `""`                     | Path to the share folder. Would copy all contents excluding top folder   |
-| `build-appimage` | `false`  | `"true"`                 | Switch to control build appImage or not                                  |
-| `build-deb`      | `false`  | `"true"`                 | Switch to control build debian package or not                            |
-| `product-name`   | `false`  | `"love_app"`             | Base name of the package. Used to rename products                        |
-| `output-folder`  | `false`  | `"./build"`              | Packages output folder. All packages would be placed here                |
+| Name               | Required  | Default                    | Description                                                               |
+| :----------------- | --------- | -------------------------- | ------------------------------------------------------------------------- |
+| `app-name`       | `false` | `"Love App"`             | App display name. Would be used in desktop file                           |
+| `bundle-id`      | `false` | `"org.loveactions.love"` | App bundle ID. Would be used to rename debian package's desktop file      |
+| `description`    | `false` | `"love"`                 | App description. Would be used in control file and desktop file           |
+| `version-string` | `false` | `"love"`                 | App version string. Use 3 numbers seperated by dots                       |
+| `icon-path`      | `false` | `""`                     | Path to the png icon. Would be used in desktop file                      |
+| `love-package`   | `false` | `"./game.love"`          | Love package. Used to assemble the executable                             |
+| `lib-path`       | `false` | `""`                     | Path to the library folder. Would copy all contents excluding top folder |
+| `share-path`     | `false` | `""`                     | Path to the share folder. Would copy all contents excluding top folder    |
+| `build-appimage` | `false` | `"true"`                 | Switch to control build appImage or not                                   |
+| `build-deb`      | `false` | `"true"`                 | Switch to control build debian package or not                             |
+| `product-name`   | `false` | `"love_app"`             | Base name of the package. Used to rename products                         |
+| `output-folder`  | `false` | `"./build"`              | Packages output folder. All packages would be placed here                 |
 
 ## All outputs
 
-| Name            | Example                     | Description                                                                                     |
-| :-------------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
+| Name              | Example                       | Description                                                                                     |
+| :---------------- | ----------------------------- | ----------------------------------------------------------------------------------------------- |
 | `package-paths` | `./build/love_app.AppImage` | built packages' paths in a bash-style list relative to the repository root, separated by spaces |

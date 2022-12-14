@@ -31,7 +31,7 @@ inputs:
     default: "11.4"
   icon-path:
     description: |
-      Path to the icon
+      Path to the icon, only supports png
       Would be used in building appImage
     required: false
   love-package:
@@ -171,13 +171,6 @@ runs:
         Description: ${{ inputs.description }}
         EOF
 
-        # Get icon extension
-        ICON_EXETENSION="png"
-        if [ -f "${{ inputs.icon-path }}" ]; then
-          ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
-          ICON_EXETENSION=${ICON_PATH##*.}
-        fi
-
         # Create desktop file
         mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications
         cat > ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications/${{ inputs.bundle-id }}.desktop << EOF
@@ -189,7 +182,7 @@ runs:
         MimeType=application/x-love-game;
         Categories=Game;
         Exec=love /usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.love
-        Icon=/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.$ICON_EXETENSION
+        Icon=${{ inputs.bundle-id }}
         Terminal=false
         NoDisplay=false
         EOF
@@ -202,8 +195,8 @@ runs:
         # Copy icon
         if [ -f "${{ inputs.icon-path }}" ]; then
           echo "Copying icon..."
-          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps
-          cp ${{ inputs.icon-path }} "./love-actions-linux/${{ inputs.product-name }}/usr/share/icons/hicolor/apps/${{ inputs.product-name }}.$ICON_EXETENSION"
+          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/pixmaps
+          cp ${{ inputs.icon-path }} ./love-actions-linux/${{ inputs.product-name }}/usr/share/pixmaps/${{ inputs.bundle-id }}.png
         fi
 
         # Copy lib
