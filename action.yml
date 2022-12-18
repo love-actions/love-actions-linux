@@ -159,7 +159,6 @@ runs:
         cat > ./love-actions-linux/deb/DEBIAN/control << EOF
         Package: ${{ inputs.product-name }}
         Version: ${{ inputs.version-string }}
-        Depends: love (>= 11.4)
         Section: games
         Priority: optional
         Architecture: amd64

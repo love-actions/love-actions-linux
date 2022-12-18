@@ -37,7 +37,6 @@ See related actions below:
     love-package: ./game.love
     lib-path: ./lib
     share-path: ./share
-    build-appimage: true
     build-deb: true
     product-name: love_app
     output-folder: ./dist
@@ -158,7 +157,6 @@ jobs:
 | `love-package`   | `false` | `"./game.love"`          | Love package. Used to assemble the executable                             |
 | `lib-path`       | `false` | `""`                     | Path to the library folder. Would copy all contents excluding top folder |
 | `share-path`     | `false` | `""`                     | Path to the share folder. Would copy all contents excluding top folder    |
-| `build-appimage` | `false` | `"true"`                 | Switch to control build appImage or not                                   |
 | `build-deb`      | `false` | `"true"`                 | Switch to control build debian package or not                             |
 | `product-name`   | `false` | `"love_app"`             | Base name of the package. Used to rename products                         |
 | `output-folder`  | `false` | `"./build"`              | Packages output folder. All packages would be placed here                 |
