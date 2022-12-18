@@ -10,29 +10,16 @@ inputs:
       Would be used in desktop file
     required: false
     default: "love"
-  bundle-id: 
-    description: |
-      App bundle ID
-      Would be used to rename debian package's desktop file
-    required: false
-    default: "org.loveactions.love"
   description:
     description: |
       App description
       Would be used in control file and desktop file
     required: false
     default: "love game"
-  version-string:
-    description: |
-      App version string
-      Use 3 numbers seperated by dots
-      Looks like 3.2.1
-    required: false
-    default: "11.4"
   icon-path:
     description: |
       Path to the icon, only supports png
-      Would be used in building appImage
+      Would be used in desktop file
     required: false
   love-package:
     description: |
@@ -52,16 +39,26 @@ inputs:
       Would copy all contents
       Top folder not included
     required: false
-  build-appimage:
-    description: |
-      Switch to control build appImage or not
-    required: false
-    default: "true"
+
   build-deb:
     description: |
       Switch to control build deb package or not
     required: false
     default: "true"
+  bundle-id: 
+    description: |
+      App bundle ID
+      Would be used to rename debian package's desktop file
+    required: false
+    default: "org.loveactions.love"
+  version-string:
+    description: |
+      App version string
+      Use 3 numbers seperated by dots
+      Looks like 3.2.1
+    required: false
+    default: "11.4"
+
   product-name:
     description: |
       Base name of the package
@@ -90,7 +87,6 @@ runs:
         mkdir -p ./love-actions-linux/
         mkdir -p ${{ inputs.output-folder }}
     - name: Create appImage package
-      if: ${{ inputs.build-appimage == 'true' }}
       shell: bash
       run: |
         # Install dependencies
@@ -159,8 +155,8 @@ runs:
       shell: bash
       run: |
         # Create control file
-        mkdir -p ./love-actions-linux/${{ inputs.product-name }}/DEBIAN
-        cat > ./love-actions-linux/${{ inputs.product-name }}/DEBIAN/control << EOF
+        mkdir -p ./love-actions-linux/deb/DEBIAN
+        cat > ./love-actions-linux/deb/DEBIAN/control << EOF
         Package: ${{ inputs.product-name }}
         Version: ${{ inputs.version-string }}
         Depends: love (>= 11.4)
@@ -172,8 +168,8 @@ runs:
         EOF
 
         # Create desktop file
-        mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications
-        cat > ./love-actions-linux/${{ inputs.product-name }}/usr/share/applications/${{ inputs.bundle-id }}.desktop << EOF
+        mkdir -p ./love-actions-linux/deb/usr/share/applications
+        cat > ./love-actions-linux/deb/usr/share/applications/${{ inputs.bundle-id }}.desktop << EOF
         [Desktop Entry]
         Name=${{ inputs.app-name }}
         Comment=${{ inputs.description }}
@@ -181,41 +177,28 @@ runs:
         Keywords=love;game;
         MimeType=application/x-love-game;
         Categories=Game;
-        Exec=love /usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.love
+        Exec=env DESKTOPINTEGRATION=no /usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.AppImage
         Icon=${{ inputs.bundle-id }}
         Terminal=false
         NoDisplay=false
         EOF
 
-        # Copy love package
-        echo "Copying love package..."
-        mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/${{ inputs.product-name }}
-        cp ${{ inputs.love-package }} ./love-actions-linux/${{ inputs.product-name }}/usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.love
+        # Copy AppImage package
+        echo "Copying AppImage package..."
+        mkdir -p ./love-actions-linux/deb/usr/share/${{ inputs.product-name }}
+        cp ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage \
+        ./love-actions-linux/deb/usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.AppImage
 
         # Copy icon
         if [ -f "${{ inputs.icon-path }}" ]; then
           echo "Copying icon..."
-          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share/pixmaps
-          cp ${{ inputs.icon-path }} ./love-actions-linux/${{ inputs.product-name }}/usr/share/pixmaps/${{ inputs.bundle-id }}.png
-        fi
-
-        # Copy lib
-        if [ -d "${{ inputs.lib-path }}" ]; then
-          echo "Copying lib..."
-          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/lib/x86_64-linux-gnu/
-          cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/lib/x86_64-linux-gnu/
-        fi
-
-        # Copy share
-        if [ -d "${{ inputs.share-path }}" ]; then
-          echo "Copying share..."
-          mkdir -p ./love-actions-linux/${{ inputs.product-name }}/usr/share
-          cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/${{ inputs.product-name }}/usr/share/
+          mkdir -p ./love-actions-linux/deb/usr/share/pixmaps
+          cp ${{ inputs.icon-path }} ./love-actions-linux/deb/usr/share/pixmaps/${{ inputs.bundle-id }}.png
         fi
 
         # Build deb package
         echo "Building deb package..."
-        dpkg-deb --build ./love-actions-linux/${{ inputs.product-name }} ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
+        dpkg-deb --build ./love-actions-linux/deb ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
         chmod a+x ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
     - name: Gather packages in output folder
       id: gather-packages
