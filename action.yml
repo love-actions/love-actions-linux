@@ -45,7 +45,7 @@ inputs:
       Switch to control build deb package or not
     required: false
     default: "true"
-  bundle-id: 
+  bundle-id:
     description: |
       App bundle ID
       Would be used to rename debian package's desktop file
@@ -197,7 +197,7 @@ runs:
 
         # Build deb package
         echo "Building deb package..."
-        dpkg-deb --build ./love-actions-linux/deb ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
+        dpkg-deb -Zxz --build ./love-actions-linux/deb ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
         chmod a+x ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
     - name: Gather packages in output folder
       id: gather-packages
