@@ -1,10 +1,15 @@
 # love-actions-linux
 
-## Notice
+## Which version to use?
 
-### This branch is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
+- For the `11.5` version of the [LÖVE](https://love2d.org/) framework, use the `v2` tag or `v2.x.x` tags.
+- For the `11.4` version of the [LÖVE](https://love2d.org/) framework, use the `v1` tag or `v1.x.x` tags.
 
-### For the latest release version, please refer to the [**main**](https://github.com/love-actions/love-actions-linux) branch.
+### Branches
+
+This branch is for the latest release version of the [LÖVE](https://love2d.org/) framework.
+
+For the `11.4` version, please refer to the [**11.4**](https://github.com/love-actions/love-actions-linux/tree/11.4) branch.
 
 ## About
 
@@ -23,14 +28,14 @@ See related actions below:
 ```yaml
 - name: Build Linux packages
   id: build-packages
-  uses: love-action/love-actions-linux@v1
+  uses: love-action/love-actions-linux@v2
   with:
     app-name: Love App
     bundle-id: com.example.loveapp
     description: My awesome love app
     version-string: "1.0.0"
     icon-path: ./.github/build/linux/dev/icon.png
-    love-ref: "11.4"
+    love-ref: "11.5"
     love-package: ./game.love
     lib-path: ./lib
     share-path: ./share
@@ -70,7 +75,7 @@ jobs:
     env:
       OUTPUT_FOLDER: ./build
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Build core love package
@@ -79,7 +84,7 @@ jobs:
           build-list: ./media/ ./parts/ ./Zframework/ ./conf.lua ./main.lua ./version.lua
           package-path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
       - name: Upload core love package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
           path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
@@ -87,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-core
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Love actions for testing
@@ -101,12 +106,12 @@ jobs:
     env:
       OUTPUT_FOLDER: ./build
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       # Download your core love package here
       - name: Download core love package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
       # This is an example dynamic library
@@ -124,7 +129,7 @@ jobs:
           mv ./x64/CCloader.so ./lib/lua/5.1
       - name: Build Linux packages
         id: build-packages
-        uses: love-actions/love-actions-linux@v1
+        uses: love-actions/love-actions-linux@v2
         with:
           app-name: Love App
           bundle-id: com.example.loveapp
@@ -136,7 +141,7 @@ jobs:
           product-name: ${{ env.PRODUCT_NAME }}
           output-folder: ${{ env.OUTPUT_FOLDER }}
       - name: Upload AppImage artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ needs.get-info.outputs.base-name }}_Linux_AppImage
           path: ${{ env.OUTPUT_FOLDER }}/${{ env.PRODUCT_NAME }}.AppImage
@@ -149,9 +154,9 @@ jobs:
 | `app-name`            | `false`  | `"Love App"`             | App display name. Would be used in desktop file                                    |
 | `bundle-id`           | `false`  | `"org.loveactions.love"` | App bundle ID. Would be used to rename debian package's desktop file               |
 | `description`         | `false`  | `"love"`                 | App description. Would be used in control file and desktop file                    |
-| `version-string`      | `false`  | `"love"`                 | App version string. Use 3 numbers seperated by dots                                |
+| `version-string`      | `false`  | `"11.5"`                 | App version string. Recommend using 3 numbers seperated by dots                    |
 | `icon-path`           | `false`  | `""`                     | Path to the png icon. Would be used in desktop file                                |
-| `love-ref`            | `false`  | `"11.4"`                 | `love` release ref. Could only be release tags like `11.4`                         |
+| `love-ref`            | `false`  | `"11.5"`                 | `love` release ref. Could only be release tags like `11.5`                         |
 | `love-package`        | `false`  | `"./game.love"`          | Love package. Used to assemble the executable                                      |
 | `lib-path`            | `false`  | `""`                     | Path to the library folder. Would copy all contents excluding top folder           |
 | `share-path`          | `false`  | `""`                     | Path to the share folder. Would copy all contents excluding top folder             |

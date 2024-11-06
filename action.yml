@@ -24,9 +24,9 @@ inputs:
   love-ref:
     description: |
       Love release ref
-      Could only be release tags like '11.4'
+      Could only be release tags like '11.5'
     required: false
-    default: "11.4"
+    default: "11.5"
   love-package:
     description: |
       Love package
@@ -59,10 +59,10 @@ inputs:
   version-string:
     description: |
       App version string
-      Use 3 numbers seperated by dots
+      Recommend using 3 numbers seperated by dots
       Looks like 3.2.1
     required: false
-    default: "11.4"
+    default: "11.5"
   product-name:
     description: |
       Base name of the package
