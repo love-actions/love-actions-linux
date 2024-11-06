@@ -1,5 +1,11 @@
 # love-actions-linux
 
+## Notice
+
+### This branch is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
+
+### For the latest release version, please refer to the [**main**](https://github.com/love-actions/love-actions-linux) branch.
+
 ## About
 
 Github Action for building & deploying Linux `.AppImage` packages of a [LÖVE](https://love2d.org/) framework based game.
@@ -11,16 +17,6 @@ See related actions below:
 [Love actions bare package](https://github.com/marketplace/actions/love-actions-bare-package)
 
 [Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
-
-[Love actions for android](https://github.com/marketplace/actions/love-actions-for-android)
-
-[Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
-
-[Love actions for macOS portable](https://github.com/marketplace/actions/love-actions-for-macos-portable)
-
-[Love actions for macOS AppStore](https://github.com/marketplace/actions/love-actions-for-macos-appstore)
-
-[Love actions for Windows](https://github.com/marketplace/actions/love-actions-for-windows)
 
 ## Quick example
 
@@ -34,6 +30,7 @@ See related actions below:
     description: My awesome love app
     version-string: "1.0.0"
     icon-path: ./.github/build/linux/dev/icon.png
+    love-ref: "11.4"
     love-package: ./game.love
     lib-path: ./lib
     share-path: ./share
@@ -147,22 +144,38 @@ jobs:
 
 ## All inputs
 
-| Name               | Required  | Default                    | Description                                                               |
-| :----------------- | --------- | -------------------------- | ------------------------------------------------------------------------- |
-| `app-name`       | `false` | `"Love App"`             | App display name. Would be used in desktop file                           |
-| `bundle-id`      | `false` | `"org.loveactions.love"` | App bundle ID. Would be used to rename debian package's desktop file      |
-| `description`    | `false` | `"love"`                 | App description. Would be used in control file and desktop file           |
-| `version-string` | `false` | `"love"`                 | App version string. Use 3 numbers seperated by dots                       |
-| `icon-path`      | `false` | `""`                     | Path to the png icon. Would be used in desktop file                      |
-| `love-package`   | `false` | `"./game.love"`          | Love package. Used to assemble the executable                             |
-| `lib-path`       | `false` | `""`                     | Path to the library folder. Would copy all contents excluding top folder |
-| `share-path`     | `false` | `""`                     | Path to the share folder. Would copy all contents excluding top folder    |
-| `build-deb`      | `false` | `"true"`                 | Switch to control build debian package or not                             |
-| `product-name`   | `false` | `"love_app"`             | Base name of the package. Used to rename products                         |
-| `output-folder`  | `false` | `"./build"`              | Packages output folder. All packages would be placed here                 |
+| Name                  | Required | Default                  | Description                                                                        |
+| :-------------------- | -------- | ------------------------ | ---------------------------------------------------------------------------------- |
+| `app-name`            | `false`  | `"Love App"`             | App display name. Would be used in desktop file                                    |
+| `bundle-id`           | `false`  | `"org.loveactions.love"` | App bundle ID. Would be used to rename debian package's desktop file               |
+| `description`         | `false`  | `"love"`                 | App description. Would be used in control file and desktop file                    |
+| `version-string`      | `false`  | `"love"`                 | App version string. Use 3 numbers seperated by dots                                |
+| `icon-path`           | `false`  | `""`                     | Path to the png icon. Would be used in desktop file                                |
+| `love-ref`            | `false`  | `"11.4"`                 | `love` release ref. Could only be release tags like `11.4`                         |
+| `love-package`        | `false`  | `"./game.love"`          | Love package. Used to assemble the executable                                      |
+| `lib-path`            | `false`  | `""`                     | Path to the library folder. Would copy all contents excluding top folder           |
+| `share-path`          | `false`  | `""`                     | Path to the share folder. Would copy all contents excluding top folder             |
+| `build-deb`           | `false`  | `"true"`                 | Switch to control build debian package or not                                      |
+| `product-name`        | `false`  | `"love_app"`             | Base name of the package. Used to rename products                                  |
+| `output-folder`       | `false`  | `"./build"`              | Packages output folder. All packages would be placed here                          |
+| `love-actions-folder` | `false`  | `"love-actions-linux"`   | Path to the `love-actions-linux` folder. Would be used to run all the action steps |
 
 ## All outputs
 
-| Name              | Example                       | Description                                                                                     |
-| :---------------- | ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| Name            | Example                     | Description                                                                                     |
+| :-------------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | `package-paths` | `./build/love_app.AppImage` | built packages' paths in a bash-style list relative to the repository root, separated by spaces |
+
+## Other platforms
+
+If you need to build game for other platforms, please check links below:
+
+[Love actions for android](https://github.com/marketplace/actions/love-actions-for-android)
+
+[Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
+
+[Love actions for macOS portable](https://github.com/marketplace/actions/love-actions-for-macos-portable)
+
+[Love actions for macOS AppStore](https://github.com/marketplace/actions/love-actions-for-macos-appstore)
+
+[Love actions for Windows](https://github.com/marketplace/actions/love-actions-for-windows)

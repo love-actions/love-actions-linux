@@ -21,6 +21,12 @@ inputs:
       Path to the icon, only supports png
       Would be used in desktop file
     required: false
+  love-ref:
+    description: |
+      Love release ref
+      Could only be release tags like '11.4'
+    required: false
+    default: "11.4"
   love-package:
     description: |
       Love package
@@ -39,7 +45,6 @@ inputs:
       Would copy all contents
       Top folder not included
     required: false
-
   build-deb:
     description: |
       Switch to control build deb package or not
@@ -58,7 +63,6 @@ inputs:
       Looks like 3.2.1
     required: false
     default: "11.4"
-
   product-name:
     description: |
       Base name of the package
@@ -71,6 +75,12 @@ inputs:
       All packages would be placed here
     required: false
     default: "./build"
+  love-actions-folder:
+    description: |
+      Path to the love-actions-linux folder
+      Would be used to run all the action steps
+    required: false
+    default: "love-actions-linux"
 outputs:
   package-paths:
     description: |
@@ -84,27 +94,29 @@ runs:
     - name: Create directories
       shell: bash
       run: |
-        mkdir -p ./love-actions-linux/
+        mkdir -p ${{ inputs.love-actions-folder }}
         mkdir -p ${{ inputs.output-folder }}
     - name: Create appImage package
+      env:
+        APPIMAGE_TOOL_PATH: appimagetool.AppImage
+        LOVE_PACKAGE_PATH: love.AppImage
       shell: bash
       run: |
         # Install dependencies
         sudo add-apt-repository universe && sudo apt install libfuse2
 
         # Download appImageKit and love base package
-        cd ./love-actions-linux/
-        curl -OL --retry 5 https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
-        curl -OL --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-x86_64.AppImage
-        mv ./appimagetool-x86_64.AppImage ./appimagetool.AppImage
-        chmod a+x ./appimagetool.AppImage
-        chmod a+x ./love-11.4-x86_64.AppImage
-        ./love-11.4-x86_64.AppImage --appimage-extract
-        cd ..
+        pushd ${{ inputs.love-actions-folder }}
+          curl -L --retry 5 https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage -o ${{ env.APPIMAGE_TOOL_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love/releases/download/${{ inputs.love-ref }}/love-${{ inputs.love-ref }}-x86_64.AppImage -o ${{ env.LOVE_PACKAGE_PATH }}
+          chmod a+x ${{ env.APPIMAGE_TOOL_PATH }}
+          chmod a+x ${{ env.LOVE_PACKAGE_PATH }}
+          ${{ env.LOVE_PACKAGE_PATH }} --appimage-extract
+        popd
 
         # Create desktop file
-        rm -rf ./love-actions-linux/squashfs-root/love.desktop
-        cat > ./love-actions-linux/squashfs-root/${{ inputs.product-name }}.desktop << EOF
+        rm -rf ${{ inputs.love-actions-folder }}/squashfs-root/love.desktop
+        cat > ${{ inputs.love-actions-folder }}/squashfs-root/${{ inputs.product-name }}.desktop << EOF
         [Desktop Entry]
         Name=${{ inputs.app-name }}
         Comment=${{ inputs.description }}
@@ -120,43 +132,43 @@ runs:
 
         # Assemble executable
         echo "Assmebling executable..."
-        cat ./love-actions-linux/squashfs-root/bin/love ${{ inputs.love-package }} > ./love-actions-linux/squashfs-root/bin/${{ inputs.product-name }}
-        chmod +x ./love-actions-linux/squashfs-root/bin/${{ inputs.product-name }}
+        cat ${{ inputs.love-actions-folder }}/squashfs-root/bin/love ${{ inputs.love-package }} > ${{ inputs.love-actions-folder }}/squashfs-root/bin/${{ inputs.product-name }}
+        chmod +x ${{ inputs.love-actions-folder }}/squashfs-root/bin/${{ inputs.product-name }}
 
         # Copy icon
         if [ -f "${{ inputs.icon-path }}" ]; then
           echo "Copying icon..."
-          rm -rf ./love-actions-linux/squashfs-root/love.svg ./love-actions-linux/squashfs-root/.DirIcon
+          rm -rf ${{ inputs.love-actions-folder }}/squashfs-root/love.svg ${{ inputs.love-actions-folder }}/squashfs-root/.DirIcon
           ICON_PATH=$(basename -- "${{ inputs.icon-path }}")
-          cp ${{ inputs.icon-path }} "./love-actions-linux/squashfs-root/${{ inputs.product-name }}.${ICON_PATH##*.}"
-          cp ${{ inputs.icon-path }} ./love-actions-linux/squashfs-root/.DirIcon
+          cp ${{ inputs.icon-path }} "${{ inputs.love-actions-folder }}/squashfs-root/${{ inputs.product-name }}.${ICON_PATH##*.}"
+          cp ${{ inputs.icon-path }} ${{ inputs.love-actions-folder }}/squashfs-root/.DirIcon
         fi
 
         # Copy lib
         if [ -d "${{ inputs.lib-path }}" ]; then
           echo "Copying lib..."
-          mkdir -p ./love-actions-linux/squashfs-root/lib
-          cp -r -f ${{ inputs.lib-path }}/* ./love-actions-linux/squashfs-root/lib
+          mkdir -p ${{ inputs.love-actions-folder }}/squashfs-root/lib
+          cp -r -f ${{ inputs.lib-path }}/* ${{ inputs.love-actions-folder }}/squashfs-root/lib
         fi
 
         # Copy share
         if [ -d "${{ inputs.share-path }}" ]; then
           echo "Copying share..."
-          mkdir -p ./love-actions-linux/squashfs-root/share
-          cp -r -f ${{ inputs.share-path }}/* ./love-actions-linux/squashfs-root/share
+          mkdir -p ${{ inputs.love-actions-folder }}/squashfs-root/share
+          cp -r -f ${{ inputs.share-path }}/* ${{ inputs.love-actions-folder }}/squashfs-root/share
         fi
 
         # Build appImage package
         echo "Building appImage package..."
-        ./love-actions-linux/appimagetool.AppImage ./love-actions-linux/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
+        ${{ inputs.love-actions-folder }}/appimagetool.AppImage ${{ inputs.love-actions-folder }}/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
         chmod a+x ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
     - name: Create deb package
       if: ${{ inputs.build-deb == 'true' }}
       shell: bash
       run: |
         # Create control file
-        mkdir -p ./love-actions-linux/deb/DEBIAN
-        cat > ./love-actions-linux/deb/DEBIAN/control << EOF
+        mkdir -p ${{ inputs.love-actions-folder }}/deb/DEBIAN
+        cat > ${{ inputs.love-actions-folder }}/deb/DEBIAN/control << EOF
         Package: ${{ inputs.product-name }}
         Version: ${{ inputs.version-string }}
         Section: games
@@ -167,8 +179,8 @@ runs:
         EOF
 
         # Create desktop file
-        mkdir -p ./love-actions-linux/deb/usr/share/applications
-        cat > ./love-actions-linux/deb/usr/share/applications/${{ inputs.bundle-id }}.desktop << EOF
+        mkdir -p ${{ inputs.love-actions-folder }}/deb/usr/share/applications
+        cat > ${{ inputs.love-actions-folder }}/deb/usr/share/applications/${{ inputs.bundle-id }}.desktop << EOF
         [Desktop Entry]
         Name=${{ inputs.app-name }}
         Comment=${{ inputs.description }}
@@ -184,27 +196,23 @@ runs:
 
         # Copy AppImage package
         echo "Copying AppImage package..."
-        mkdir -p ./love-actions-linux/deb/usr/share/${{ inputs.product-name }}
+        mkdir -p ${{ inputs.love-actions-folder }}/deb/usr/share/${{ inputs.product-name }}
         cp ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage \
-        ./love-actions-linux/deb/usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.AppImage
+        ${{ inputs.love-actions-folder }}/deb/usr/share/${{ inputs.product-name }}/${{ inputs.product-name }}.AppImage
 
         # Copy icon
         if [ -f "${{ inputs.icon-path }}" ]; then
           echo "Copying icon..."
-          mkdir -p ./love-actions-linux/deb/usr/share/pixmaps
-          cp ${{ inputs.icon-path }} ./love-actions-linux/deb/usr/share/pixmaps/${{ inputs.bundle-id }}.png
+          mkdir -p ${{ inputs.love-actions-folder }}/deb/usr/share/pixmaps
+          cp ${{ inputs.icon-path }} ${{ inputs.love-actions-folder }}/deb/usr/share/pixmaps/${{ inputs.bundle-id }}.png
         fi
 
         # Build deb package
         echo "Building deb package..."
-        dpkg-deb -Zxz --build ./love-actions-linux/deb ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
+        dpkg-deb -Zxz --build ${{ inputs.love-actions-folder }}/deb ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
         chmod a+x ${{ inputs.output-folder }}/${{ inputs.product-name }}.deb
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
       run: |
         echo "package-paths=$(ls -d ${{ inputs.output-folder }}/* | tr '\r\n' ' ')" >> $GITHUB_OUTPUT
-    - name: Cleanup
-      shell: bash
-      run: |
-        rm -rf ./love-actions-linux/
