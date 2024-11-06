@@ -80,7 +80,7 @@ inputs:
       Path to the love-actions-linux folder
       Would be used to run all the action steps
     required: false
-    default: "love-actions-linux"
+    default: "./love-actions-linux"
 outputs:
   package-paths:
     description: |
@@ -98,8 +98,8 @@ runs:
         mkdir -p ${{ inputs.output-folder }}
     - name: Create appImage package
       env:
-        APPIMAGE_TOOL_PATH: appimagetool.AppImage
-        LOVE_PACKAGE_PATH: love.AppImage
+        APPIMAGE_TOOL_PATH: ./appimagetool.AppImage
+        LOVE_PACKAGE_PATH: ./love.AppImage
       shell: bash
       run: |
         # Install dependencies
