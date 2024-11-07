@@ -115,7 +115,7 @@ runs:
         popd
 
         # Create desktop file
-        rm -rf ${{ inputs.love-actions-folder }}/squashfs-root/love.desktop
+        rm -f ${{ inputs.love-actions-folder }}/squashfs-root/love.desktop
         cat > ${{ inputs.love-actions-folder }}/squashfs-root/${{ inputs.product-name }}.desktop << EOF
         [Desktop Entry]
         Name=${{ inputs.app-name }}
@@ -132,8 +132,10 @@ runs:
 
         # Assemble executable
         echo "Assmebling executable..."
+        sed -i 's|bin/love|bin/${{ inputs.product-name }}|g' ${{ inputs.love-actions-folder }}/squashfs-root/AppRun
         cat ${{ inputs.love-actions-folder }}/squashfs-root/bin/love ${{ inputs.love-package }} > ${{ inputs.love-actions-folder }}/squashfs-root/bin/${{ inputs.product-name }}
         chmod +x ${{ inputs.love-actions-folder }}/squashfs-root/bin/${{ inputs.product-name }}
+        rm -f ${{ inputs.love-actions-folder }}/squashfs-root/bin/love
 
         # Copy icon
         if [ -f "${{ inputs.icon-path }}" ]; then
