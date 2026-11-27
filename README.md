@@ -15,6 +15,8 @@ For the `11.4` version, please refer to the [**11.4**](https://github.com/love-a
 
 Github Action for building & deploying Linux `.AppImage` packages of a [LÖVE](https://love2d.org/) framework based game.
 
+The build does not require FUSE or `libfuse2` on the runner. This does not change the requirements for running the resulting AppImage.
+
 ### Related actions
 
 See related actions below:

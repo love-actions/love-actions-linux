@@ -108,13 +108,11 @@ runs:
         UPDATE_INFORMATION: ${{ inputs.update-information }}
       shell: bash
       run: |
-        # Install dependencies
-        dependencies=(libfuse2)
+        # Install zsync only when update metadata is requested.
         if [[ -n "$UPDATE_INFORMATION" ]]; then
-          dependencies+=(zsync)
+          sudo add-apt-repository universe
+          sudo apt install -y zsync
         fi
-        sudo add-apt-repository universe
-        sudo apt install -y "${dependencies[@]}"
 
         # Download appImageKit and love base package
         pushd ${{ inputs.love-actions-folder }}
@@ -171,7 +169,7 @@ runs:
           cp -r -f ${{ inputs.share-path }}/* ${{ inputs.love-actions-folder }}/squashfs-root/share
         fi
 
-        # Build appImage package
+        # Build the AppImage without mounting appimagetool through FUSE.
         echo "Building appImage package..."
         work_dir="${{ inputs.love-actions-folder }}"
         output_dir="${{ inputs.output-folder }}"
@@ -181,10 +179,10 @@ runs:
           (
             work_dir="$(realpath -- "$work_dir")"
             cd -- "$output_dir"
-            "$work_dir/$APPIMAGE_TOOL_PATH" --updateinformation "$UPDATE_INFORMATION" "$work_dir/squashfs-root" "./$appimage_name"
+            "$work_dir/$APPIMAGE_TOOL_PATH" --appimage-extract-and-run --updateinformation "$UPDATE_INFORMATION" "$work_dir/squashfs-root" "./$appimage_name"
           )
         else
-          "$work_dir/$APPIMAGE_TOOL_PATH" "$work_dir/squashfs-root" "$output_dir/$appimage_name"
+          "$work_dir/$APPIMAGE_TOOL_PATH" --appimage-extract-and-run "$work_dir/squashfs-root" "$output_dir/$appimage_name"
         fi
         chmod a+x "$output_dir/$appimage_name"
     - name: Create deb package
