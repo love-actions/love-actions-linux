@@ -59,6 +59,20 @@ Your library folder should look like this:
            |- load_in_lua.so
 ```
 
+### AppImage updates
+
+Set `update-information` to an [AppImage update string](https://github.com/AppImage/AppImageSpec/blob/master/draft.md#update-information) to embed update metadata and generate a `.zsync` file. Leave it unset to build without update metadata.
+
+For GitHub Releases, add this to the build step:
+
+```yaml
+with:
+  product-name: love-app
+  update-information: "gh-releases-zsync|OWNER|REPOSITORY|latest|love-app.AppImage.zsync"
+```
+
+Replace `OWNER` and `REPOSITORY` with the repository hosting your releases. Upload both `love-app.AppImage` and `love-app.AppImage.zsync` as assets on each release. When generated, the `.zsync` path is included in `package-paths`.
+
 ## With [Love actions bare package](https://github.com/marketplace/actions/love-actions-bare-package) and [Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
 
 ```yml
@@ -158,6 +172,7 @@ jobs:
 | `icon-path`           | `false`  | `""`                     | Path to the png icon. Would be used in desktop file                                |
 | `love-ref`            | `false`  | `"11.5"`                 | `love` release ref. Could only be release tags like `11.5`                         |
 | `love-package`        | `false`  | `"./game.love"`          | Love package. Used to assemble the executable                                      |
+| `update-information`  | `false`  | `""`                     | AppImage update string. When set, generates a `.AppImage.zsync` file.              |
 | `lib-path`            | `false`  | `""`                     | Path to the library folder. Would copy all contents excluding top folder           |
 | `share-path`          | `false`  | `""`                     | Path to the share folder. Would copy all contents excluding top folder             |
 | `build-deb`           | `false`  | `"true"`                 | Switch to control build debian package or not                                      |

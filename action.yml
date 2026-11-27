@@ -33,6 +33,11 @@ inputs:
       Would be used to assemble the executable
     required: false
     default: "./game.love"
+  update-information:
+    description: |
+      AppImage update information string
+      When set, embeds update information and generates a .AppImage.zsync file
+    required: false
   lib-path:
     description: |
       Path to the lib folder
@@ -100,10 +105,16 @@ runs:
       env:
         APPIMAGE_TOOL_PATH: ./appimagetool.AppImage
         LOVE_PACKAGE_PATH: ./love.AppImage
+        UPDATE_INFORMATION: ${{ inputs.update-information }}
       shell: bash
       run: |
         # Install dependencies
-        sudo add-apt-repository universe && sudo apt install libfuse2
+        dependencies=(libfuse2)
+        if [[ -n "$UPDATE_INFORMATION" ]]; then
+          dependencies+=(zsync)
+        fi
+        sudo add-apt-repository universe
+        sudo apt install -y "${dependencies[@]}"
 
         # Download appImageKit and love base package
         pushd ${{ inputs.love-actions-folder }}
@@ -162,8 +173,20 @@ runs:
 
         # Build appImage package
         echo "Building appImage package..."
-        ${{ inputs.love-actions-folder }}/appimagetool.AppImage ${{ inputs.love-actions-folder }}/squashfs-root ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
-        chmod a+x ${{ inputs.output-folder }}/${{ inputs.product-name }}.AppImage
+        work_dir="${{ inputs.love-actions-folder }}"
+        output_dir="${{ inputs.output-folder }}"
+        appimage_name="${{ inputs.product-name }}.AppImage"
+        if [[ -n "$UPDATE_INFORMATION" ]]; then
+          # zsyncmake writes the .zsync file to the current directory.
+          (
+            work_dir="$(realpath -- "$work_dir")"
+            cd -- "$output_dir"
+            "$work_dir/$APPIMAGE_TOOL_PATH" --updateinformation "$UPDATE_INFORMATION" "$work_dir/squashfs-root" "./$appimage_name"
+          )
+        else
+          "$work_dir/$APPIMAGE_TOOL_PATH" "$work_dir/squashfs-root" "$output_dir/$appimage_name"
+        fi
+        chmod a+x "$output_dir/$appimage_name"
     - name: Create deb package
       if: ${{ inputs.build-deb == 'true' }}
       shell: bash
